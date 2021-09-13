@@ -1,5 +1,6 @@
 import style from "./SearchBar.module.css";
 import React, { Component } from "react";
+import { toast } from "react-toastify";
 // import PropTypes from 'prop-types';
 
 class SearchBar extends Component {
@@ -15,7 +16,7 @@ class SearchBar extends Component {
     e.preventDefault();
 
     if (this.state.searchFieldvalue.trim() === "") {
-      alert("Вы ввели пустой запрос");
+      toast("Вы ввели пустое поле");
       return;
     }
     this.props.onSubmit(this.state.searchFieldvalue);
