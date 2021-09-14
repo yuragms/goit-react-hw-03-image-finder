@@ -107,7 +107,7 @@ class App extends Component {
     return (
       <div>
         <SearchBar onSubmit={this.handleFormSubmit} />
-        {error && alert("uuuuuuuu")}
+        {error && <h1>Нет данных с таким запросом</h1>}
         {loading && <Spinner />}
 
         {data && <ImageGallery hits={data} onClick={this.handleClickImage} />}
