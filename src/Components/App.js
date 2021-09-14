@@ -6,6 +6,8 @@ import ImageGallery from "./ImageGallery/ImageGallery.jsx";
 import Modal from "./Modal/Modal.jsx";
 import ButtonMore from "./Button/Button.jsx";
 import style from "./App.module.css";
+import { Spinner } from "./Loader/Loader.jsx";
+import fetchAPI from "./API/API.js";
 
 class App extends Component {
   state = {
@@ -18,10 +20,6 @@ class App extends Component {
     taglargeImage: null,
   };
 
-  // https://pixabay.com/api/?q=cat&page=1&key=22652626-da7dc8e3a4ffdfdaea60a5cb5&image_type=photo&orientation=horizontal&per_page=12
-
-  componentDidMount() {}
-
   componentDidUpdate(prevProps, prevState) {
     const prevFieldvalue = prevState.searchFieldvalue;
     const nextFieldvalue = this.state.searchFieldvalue;
@@ -32,12 +30,16 @@ class App extends Component {
 
       this.setState({ loading: true });
       setTimeout(() => {
-        fetch(
-          `https://pixabay.com/api/?q=${nextFieldvalue}&page=${page}&key=22652626-da7dc8e3a4ffdfdaea60a5cb5&image_type=photo&orientation=horizontal&per_page=12`
-        )
-          .then((res) => res.json())
+        fetchAPI
+          .fetchFirstArr(nextFieldvalue, page)
           .then((data) =>
             this.setState({ data: [...prevState.data, ...data.hits] })
+          )
+          .then(
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: "smooth",
+            })
           )
           .catch((error) => this.setState({ error }))
           .finally(() => this.setState({ loading: false }));
@@ -70,8 +72,8 @@ class App extends Component {
   };
 
   handleFormSubmit = (searchFieldvalue) => {
-    console.log(searchFieldvalue);
-    this.setState({ searchFieldvalue });
+    console.log(`searchFieldvalue 12`);
+    this.setState({ searchFieldvalue, page: 1, data: [] });
   };
 
   handleClickLoadMore = () => {
@@ -87,13 +89,15 @@ class App extends Component {
       <div>
         <SearchBar onSubmit={this.handleFormSubmit} />
         {error && <h1>Нету данных, введите запрос точнее</h1>}
-        {loading && <h1>Загружаем...</h1>}
+        {loading && <Spinner />}
         {/* {data && <div>Тут будет покемон после фетча<img src={data.hits[0].webformatURL} alt="ff" width="300"/></div>} */}
-        {data && <ImageGallery hits={data} onClick={this.handleClickImage} />}
 
-        <div className={style.ModBut}>
-          <ButtonMore handleClickLoadMore={this.handleClickLoadMore} />
-        </div>
+        {data && <ImageGallery hits={data} onClick={this.handleClickImage} />}
+        {data && (
+          <div className={style.ModBut}>
+            <ButtonMore handleClickLoadMore={this.handleClickLoadMore} />
+          </div>
+        )}
 
         <ToastContainer autoClose={3000} />
         {selectedlargeImageURL && (
