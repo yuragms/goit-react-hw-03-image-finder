@@ -32,7 +32,14 @@ class App extends Component {
 
       fetchAPI
         .fetchFirstArr(nextFieldvalue, page)
-        .then((data) => this.setState({ data: [...data.hits] }))
+        .then((data) => {
+          if (data.hits.length > 0) {
+            console.log(7777);
+          } else {
+            this.setState({ error: 1 });
+          }
+          this.setState({ data: [...data.hits] });
+        })
         .then(
           window.scrollTo({
             top: document.documentElement.scrollHeight,
@@ -50,9 +57,9 @@ class App extends Component {
 
       fetchAPI
         .fetchFirstArr(nextFieldvalue, page)
-        .then((data) =>
-          this.setState({ data: [...prevState.data, ...data.hits] })
-        )
+        .then((data) => {
+          this.setState({ data: [...prevState.data, ...data.hits] });
+        })
         .then(
           window.scrollTo({
             top: document.documentElement.scrollHeight,
@@ -91,7 +98,7 @@ class App extends Component {
   handleFormSubmit = (searchFieldvalue) => {
     console.log(`searchFieldvalue 12`);
 
-    this.setState({ searchFieldvalue, page: 1, data: [] });
+    this.setState({ searchFieldvalue, page: 1, data: [], error: null });
   };
 
   handleClickLoadMore = () => {
