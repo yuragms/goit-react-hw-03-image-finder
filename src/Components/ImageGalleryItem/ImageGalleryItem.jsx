@@ -2,7 +2,6 @@ import style from "./ImageGalleryItem.module.css";
 
 export default function ImageGalleryItem({ hits, onClick }) {
   return (
-    // <ul className={style.ImageGallery}>
     <>
       {hits.map((item) => (
         <li key={item.id} className={style.ImageGalleryItem}>
@@ -15,6 +14,5 @@ export default function ImageGalleryItem({ hits, onClick }) {
         </li>
       ))}
     </>
-    // </ul>
   );
 }
