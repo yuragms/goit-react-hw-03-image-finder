@@ -29,21 +29,38 @@ class App extends Component {
       console.log("ИЗМЕНИЛОСЬ ПОЛЕ ПОСКА");
 
       this.setState({ loading: true });
-      setTimeout(() => {
-        fetchAPI
-          .fetchFirstArr(nextFieldvalue, page)
-          .then((data) =>
-            this.setState({ data: [...prevState.data, ...data.hits] })
-          )
-          .then(
-            window.scrollTo({
-              top: document.documentElement.scrollHeight,
-              behavior: "smooth",
-            })
-          )
-          .catch((error) => this.setState({ error }))
-          .finally(() => this.setState({ loading: false }));
-      }, 1500);
+
+      fetchAPI
+        .fetchFirstArr(nextFieldvalue, page)
+        .then((data) => this.setState({ data: [...data.hits] }))
+        .then(
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth",
+          })
+        )
+        .catch((error) => this.setState({ error }))
+        .finally(() => this.setState({ loading: false }));
+    }
+
+    if (prevState.page !== page) {
+      console.log("Изменилась пагинация");
+
+      this.setState({ loading: true });
+
+      fetchAPI
+        .fetchFirstArr(nextFieldvalue, page)
+        .then((data) =>
+          this.setState({ data: [...prevState.data, ...data.hits] })
+        )
+        .then(
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth",
+          })
+        )
+        .catch((error) => this.setState({ error }))
+        .finally(() => this.setState({ loading: false }));
     }
   }
 
@@ -73,6 +90,7 @@ class App extends Component {
 
   handleFormSubmit = (searchFieldvalue) => {
     console.log(`searchFieldvalue 12`);
+
     this.setState({ searchFieldvalue, page: 1, data: [] });
   };
 
@@ -83,17 +101,17 @@ class App extends Component {
   render() {
     const { data, loading, error, selectedlargeImageURL, taglargeImage } =
       this.state;
-    // const hits = data.hits;
-    console.log(data);
+
+    const showButton = data.length > 0;
+    console.log(`data999`);
     return (
       <div>
         <SearchBar onSubmit={this.handleFormSubmit} />
-        {error && <h1>Нету данных, введите запрос точнее</h1>}
+        {error && alert("uuuuuuuu")}
         {loading && <Spinner />}
-        {/* {data && <div>Тут будет покемон после фетча<img src={data.hits[0].webformatURL} alt="ff" width="300"/></div>} */}
 
         {data && <ImageGallery hits={data} onClick={this.handleClickImage} />}
-        {data && (
+        {showButton && (
           <div className={style.ModBut}>
             <ButtonMore handleClickLoadMore={this.handleClickLoadMore} />
           </div>
